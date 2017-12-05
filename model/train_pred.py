@@ -12,16 +12,19 @@ from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 tokenizer = Tokenizer(num_words=5000)
-rege1 = re.compile('[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
-rege2 = re.compile('\'')
+rege1 = re.compile(r'[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
+rege2 = re.compile(r'\'')
 
-with open('./test_users.txt') as f:
+DATA_DIR = '../data/'
+MODEL_DIR = '../trained/'
+
+with open(DATA_DIR+'./test_users.txt') as f:
     bads = set(f.read().split('\n'))
 
 X = []
 Y = []
 
-tree = etree.parse('./test.xml')
+tree = etree.parse(DATA_DIR+'./test.xml')
 root = tree.getroot()
 for conversation in root:
     messages = {}
@@ -62,9 +65,9 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.summary())
 model.fit(X_train, y_train, nb_epoch=3, batch_size=64)
-model.save("my_model.h5")
-model.save_weights('model.hdf5')
-with open('model.json', 'w') as f:
+model.save(MODEL_DIR+"my_model.h5")
+model.save_weights(MODEL_DIR+'model.hdf5')
+with open(MODEL_DIR+'model.json', 'w') as f:
     f.write(model.to_json())
 scores = model.evaluate(X_test, y_test, verbose=0)
 print("Accuracy: %.2f%%" % (scores[1]*100))

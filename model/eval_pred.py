@@ -12,17 +12,23 @@ from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.models import load_model
 from keras.preprocessing import sequence
-tokenizer = Tokenizer(num_words=5000)
-rege1 = re.compile('[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
-rege2 = re.compile('\'')
 
-with open('./test_users.txt') as f:
+DATA_DIR = '../data/'
+MODEL_DIR = '../trained/'
+
+tokenizer = Tokenizer(num_words=5000)
+rege1 = re.compile(r'[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
+rege2 = re.compile(r'\'')
+
+
+
+with open(DATA_DIR+'test_users.txt') as f:
     bads = set(f.read().split('\n'))
 
 X = []
 Y = []
 
-tree = etree.parse('./test.xml')
+tree = etree.parse(DATA_DIR+'test.xml')
 root = tree.getroot()
 for conversation in root:
     messages = {}
@@ -56,7 +62,7 @@ max_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_length)
 
-model = load_model("my_model.h5")
+model = load_model(MODEL_DIR+'my_model.h5')
 p = n = 0
 fp = fn = 0
 O = model.predict(X_test)
@@ -72,5 +78,5 @@ for i in range(len(X_test)):
         if y < 0.01:
             fn += 1
 
-print("False Positive Rate: {}".format(100*fp/n))
-print("Fa;se Negative Rate: {}".format(100*fn/p))
+print('False Positive Rate: {}'.format(100*fp/n))
+print('False Negative Rate: {}'.format(100*fn/p))

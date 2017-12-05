@@ -13,16 +13,18 @@ from keras.layers.embeddings import Embedding
 from keras.models import load_model
 from keras.preprocessing import sequence
 tokenizer = Tokenizer(num_words=5000)
-rege1 = re.compile('[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
-rege2 = re.compile('\'')
+rege1 = re.compile(r'[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
+rege2 = re.compile(r'\'')
 
-with open('./test_users.txt') as f:
+DATA_DIR = '../data/'
+
+with open(DATA_DIR+'./test_users.txt') as f:
     bads = set(f.read().split('\n'))
 
 X = []
 Y = []
 
-tree = etree.parse('./test.xml')
+tree = etree.parse(DATA_DIR+'./test.xml')
 root = tree.getroot()
 for conversation in root:
     messages = {}
@@ -32,11 +34,14 @@ for conversation in root:
         text = rege2.sub('', text)
         words = text.split()
         words = [words[i] for i in range(len(words)) if i==0 or words[i-1] != words[i]]
+        print(words)
         if len(words) < 1: continue
         words = ' '.join(words) + ' '
         messages[author] = messages.get(author, '') + words
     for author in messages:
         words = messages[author]
+        print(words)
+        exit()
         X.append(words)
         Y.append(1 if author in bads else 0)
 
@@ -54,10 +59,12 @@ X_test  = X[i:]
 X2      = X2[i:]
 y_test  = Y[i:]
 
-max_review_length = 500
+max_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_length)
 
+print(X_train[0])
+exit()
 model = load_model("my_model.h5")
 p = n = 0
 fp = fn = 0
