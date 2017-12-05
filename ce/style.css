@@ -1,0 +1,17 @@
+#__nlp_proj_left {
+position:fixed;
+background:green;
+left:0;
+top:0;
+height:100%;
+width:6px;
+}
+
+#__nlp_proj_right {
+position:fixed;
+background:green;
+right:0;
+top:0;
+height:100%;
+width:6px;
+}
