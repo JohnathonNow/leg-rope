@@ -51,18 +51,19 @@ function timer() {
 setTimeout(timer, 500);
 
 function eval(str) {
-    str = "bugmail: [bug 6978] new: mark eof-terminated script elements as malformed &lt;http://lists.w3.org/archives/public/public-html-bugzilla/2009may/0049.html&gt; title: action-123 - html weekly tracker (at www.w3.org)";
     model.ready()
       .then(() => {
         var data = str;
         data = tokenize(data);
         data = new Float32Array(data);
+        console.log(data);
         const inputData = {
           'input': data
         }
         return model.predict(inputData)
       })
       .then(outputData => {
+        console.log(outputData);
         console.log(outputData['output'][0]);
         if (outputData['output'][0] > 0.01) {
             __nlp_proj_set_color("yellow");

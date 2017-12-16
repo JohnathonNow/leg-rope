@@ -4,16 +4,17 @@ import collections
 import re
 from math import log
 
-rege1 = re.compile('[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
-rege2 = re.compile('\'')
+rege1 = re.compile(r'[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
+rege2 = re.compile(r'\'')
 
+DATA_DIR = '../data/'
 
-ngram = 2
+ngram = 3
 bad_words = collections.Counter()
 good_words = collections.Counter()
 good_total = 1
 bad_total = 1
-P_sbad = 0.00000003
+P_sbad = 0.000000004
 P_sgood = 1-P_sbad
 
 def P_good(w):
@@ -31,9 +32,9 @@ def classify(s):
     p = log(P_sbad/P_sgood) + sum([log(P_bad(words[i-ngram:i])/P_good(words[i-ngram:i])) for i in range(ngram-1,len(words))])
     return p > 0
 #train
-with open('./test_users.txt') as f:
+with open(DATA_DIR+'./test_users.txt') as f:
     bads = set(f.read().split('\n'))
-tree = etree.parse('./test.xml')
+tree = etree.parse(DATA_DIR+'./test.xml')
 root = tree.getroot()
 for conversation in root:
     for message in conversation:
@@ -57,9 +58,9 @@ fp = 0
 fn = 0
 p = 0
 n = 0
-with open('./train_users.txt') as f:
+with open(DATA_DIR+'./train_users.txt') as f:
     bads = set(f.read().split('\n'))
-tree = etree.parse('./train.xml')
+tree = etree.parse(DATA_DIR+'./train.xml')
 root = tree.getroot()
 for conversation in root:
     lines = {}
