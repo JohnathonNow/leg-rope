@@ -47,6 +47,7 @@ y_train = Y[:i]
 X_test  = X[i:]
 y_test  = Y[i:]
 
+#Code below largely from https://machinelearningmastery.com/sequence-classification-lstm-recurrent-neural-networks-python-keras/
 max_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_length)
