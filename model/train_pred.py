@@ -11,7 +11,7 @@ from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
-tokenizer = Tokenizer(num_words=5000)
+tokenizer = Tokenizer(num_words=1000)
 rege1 = re.compile(r'[`!"#$%&()*+,-\./:;<=>\?@\[\\\]^_\{|\}~]')
 rege2 = re.compile(r'\'')
 
@@ -45,30 +45,25 @@ for conversation in root:
 tokenizer.fit_on_texts(X)
 X = tokenizer.texts_to_sequences(X)
 
-X = X[:100000]
-Y = Y[:100000]
-numpy.random.seed(7)
+numpy.random.seed(2607)
 i = int(len(X)*0.6)
 X_train = X[:i]
 y_train = Y[:i]
 X_test  = X[i:]
 y_test  = Y[i:]
 
-#Code below largely from https://machinelearningmastery.com/sequence-classification-lstm-recurrent-neural-networks-python-keras/
 max_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_length)
-embedding_vecor_length = 32
 model = Sequential()
-model.add(Embedding(5000, embedding_vecor_length, input_length=max_length))
-model.add(LSTM(100))
+model.add(Embedding(1000, 32, input_length=max_length))
+model.add(LSTM(200))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-print(model.summary())
-model.fit(X_train, y_train, nb_epoch=3, batch_size=64)
+model.fit(X_train, y_train, nb_epoch=5, batch_size=100)
+
 model.save(MODEL_DIR+"my_model.h5")
 model.save_weights(MODEL_DIR+'model.hdf5')
+
 with open(MODEL_DIR+'model.json', 'w') as f:
     f.write(model.to_json())
-scores = model.evaluate(X_test, y_test, verbose=0)
-print("Accuracy: %.2f%%" % (scores[1]*100))
